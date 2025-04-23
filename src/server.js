@@ -43,6 +43,8 @@ import authRoutes      from './routes/auth.routes.js';
 import orderRoutes      from './routes/order.routes.js';
 import shipmentRoutes from './routes/shipment.routes.js';
 import productRoutes from './routes/product.routes.js';
+import stockRoutes from './routes/stock.routes.js';
+import taskRoutes from './routes/task.routes.js';
 
 const app = express();
 app.use(express.json());
@@ -54,6 +56,10 @@ app.use('/', authRoutes);
 app.use("/", orderRoutes);
 app.use("/", shipmentRoutes);
 app.use("/", productRoutes);
+
+app.use("/", stockRoutes);
+app.use("/", taskRoutes);
+
 
 
 
