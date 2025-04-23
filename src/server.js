@@ -41,6 +41,7 @@ import { MONGO_URI, PORT } from './config.js';
 import authRoutes      from './routes/auth.routes.js';
 // import errorHandler    from './utils/errorHandler.js';
 import orderRoutes      from './routes/order.routes.js';
+import shipmentRoutes from './routes/shipment.routes.js';
 
 const app = express();
 app.use(express.json());
@@ -50,6 +51,9 @@ app.use('/', authRoutes);
 // ...
 
 app.use("/", orderRoutes);
+app.use("/", shipmentRoutes);
+
+
 
 // Error handler
 // app.use(errorHandler);
