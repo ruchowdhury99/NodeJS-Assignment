@@ -116,7 +116,12 @@ export async function deleteShipment(req, res, next) {
     if (!deleted) {
       return res.status(404).json({ status:404, message:"Shipment not found" });
     }
-    return res.status(204).end();
+    //return res.status(204).end();
+
+    return res.status(204).json({
+        status: 204,
+        message: "Shipment deleted successfully"
+    });
   } catch (err) {
     next(err);
   }

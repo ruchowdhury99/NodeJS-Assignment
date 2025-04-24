@@ -84,7 +84,11 @@ export async function updateOrder(req, res, next) {
 export async function deleteOrder(req, res, next) {
   try {
     await Order.findByIdAndDelete(req.params.id);
-    res.status(204).end();
+    //res.status(204).end();
+    return res.status(204).json({
+        status: 204,
+        message: "Order deleted successfully"
+    });
   } catch (err) {
     next(err);
   }
