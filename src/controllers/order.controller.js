@@ -181,27 +181,3 @@ export async function getOrdersStats(req, res, next) {
       next(err);
     }
   }
-
-
-  // export async function getOrdersStats(req, res, next) {
-//   try {
-//     const { startDate, endDate } = req.query;
-//     if (!startDate || !endDate) {
-//       return res.status(400).json({ status: 400, message: "startDate and endDate are required" });
-//     }
-//     const start = new Date(startDate);
-//     const end = new Date(endDate);
-
-//     const agg = await Order.aggregate([
-//       { $match: { orderDate: { $gte: start, $lte: end } } },
-//       { $group: { _id: "$status", count: { $sum: 1 } } }
-//     ]);
-
-//     const stats = { Active: 0, Inactive: 0 };
-//     agg.forEach(({ _id, count }) => { stats[_id] = count; });
-
-//     res.json({ status: 200, data: { orders: stats } });
-//   } catch (err) {
-//     next(err);
-//   }
-// }
