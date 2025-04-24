@@ -1,3 +1,8 @@
+
+//---------------------------------SERVER SETUP---------------------------------//
+
+// Entry point of the backend application
+
 import express from 'express';
 import mongoose from 'mongoose';
 
@@ -32,15 +37,16 @@ app.use("/", blogRoutes);
 // Error handler
 // app.use(errorHandler);
 
-// Connect & run
+// Connecting the database & running the server
+
 mongoose.connect(MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected');
+    console.log('\n MongoDB connected successfully');
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`\n Server running on http://localhost:${PORT}`);
     });
   })
   .catch(err => {
-    console.error('❌ DB connection error:', err);
+    console.error(' DB connection error:', err);
     process.exit(1);
   });

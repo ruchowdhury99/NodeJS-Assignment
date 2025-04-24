@@ -1,5 +1,11 @@
+
+//----------------------------------------ORDER SCHEMA-----------------------------------------//
+
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
+
+
+// OrderItem sub-schema to store item name and quantity
 
 const orderItemSchema = new Schema({
     
@@ -12,6 +18,10 @@ const orderItemSchema = new Schema({
     required: true
   }
 }, { _id: false });
+
+
+// Order schema to store order details
+// Also indicates the status of the order (Active or Inactive)
 
 const orderSchema = new Schema({
   orderDate: {

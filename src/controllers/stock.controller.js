@@ -1,6 +1,16 @@
+
+//---------------------------------------STOCKS CONTROLLERS----------------------------------------//
+
+// 1. Create a stock entry
+// 2. Get stock details with optional filters
+
+
 import Stock from '../models/stock.model.js';
 
-// Create a stock entry
+// 1. Creating a new stock entry
+
+// POST - {baseurl}/stock
+
 export async function createStock(req, res, next) {
   try {
     const {
@@ -16,7 +26,7 @@ export async function createStock(req, res, next) {
       status
     } = req.body;
 
-    // Validate required fields
+    // Validating the required fields
     const required = [
       'product','productName','consumerName','supplierName',
       'quantity','price','sellingPrice','cashier','status'
@@ -27,23 +37,44 @@ export async function createStock(req, res, next) {
       }
     }
 
+    // Creating a new product object and saving it to the database
+
     const stock = await Stock.create({
-      product, productName, consumerName, supplierName,
-      dateOfEntry, quantity, price, sellingPrice, cashier, status
+      product, 
+      productName, 
+      consumerName, 
+      supplierName,
+      dateOfEntry, 
+      quantity, 
+      price, 
+      sellingPrice, 
+      cashier, 
+      status
     });
     res.status(201).json({ status:201, data: stock });
   } catch (err) { next(err); }
 }
 
-// Paginated, filtered, sorted list for /stockDetails
+
+// 2. Getting stock details with filters
+
+// GET - {baseurl}/stockDetails
+
 export async function getStockDetails(req, res, next) {
   try {
+
+    // Parsing query parameters and creating filter conditions
+    // Pagination and sorting parameters are optional and default to 1, 10, 'dateOfEntry', 'desc' respectively
+
     let { pageNumber = 1, offset = 10, status, sortBy = 'dateOfEntry', sortDir = 'desc' } = req.query;
     pageNumber = parseInt(pageNumber);
     offset = parseInt(offset);
 
     const filter = {};
     if (status) filter.status = new RegExp(`^${status}$`, 'i');
+
+
+    // Calculating total number of records and fetching the requested page of stocks
 
     const totalRecords = await Stock.countDocuments(filter);
     const stocks = await Stock.find(filter)
@@ -52,6 +83,10 @@ export async function getStockDetails(req, res, next) {
       .limit(offset)
       .select('-__v');
 
+      // Mapping stock data to a more readable format
+      // Converting date to string and converting ObjectId to string for easier readability 
+
+    
     const data = stocks.map(s => ({
       productid:     s.product.toString(),
       productName:   s.productName,

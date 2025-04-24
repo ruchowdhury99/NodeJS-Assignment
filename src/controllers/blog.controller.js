@@ -1,16 +1,37 @@
+
+//-------------------------------------BLOGS CONTROLLERS-------------------------------------//
+
+// 1. Create a new blog
+// 2. Get all blogs
+// 3. Get a single blog by ID
+
 import Blog from '../models/blog.model.js';
 
-/**
- * POST /blogs
- * Body: { title, description, createdBy }
- */
+
+// 1. Creating a new blog
+
+// POST - {baseurl}/blogs
+
 export async function createBlog(req, res, next) {
   try {
+
+    // Fetching the blog content and user from the request
+
     const { title, description, createdBy } = req.body;
     if (!title || !description || !createdBy) {
       return res.status(400).json({ status: 400, message: 'Missing required fields' });
     }
-    const blog = await Blog.create({ title, description, createdBy });
+
+    // Creating a new blog document and saving it in the database
+
+    const blog = await Blog.create({ 
+      title, 
+      description, 
+      createdBy
+     });
+
+     // Returning the created blog with its ID and other relevant details
+
     return res.status(201).json({
       status: 201,
       message: 'Blog created successfully',
@@ -27,14 +48,22 @@ export async function createBlog(req, res, next) {
   }
 }
 
-/**
- * GET /blogs/all?pageNumber=1&offset=10
- */
+
+// 2. Getting all blogs with pagination
+
+// GET - {baseurl}/blogs/all?pageNumber=1&offset=10
+
 export async function listBlogs(req, res, next) {
   try {
+
+    // Fetching the page number and offset from the request query parameters
+
     let { pageNumber = 1, offset = 10 } = req.query;
     pageNumber = parseInt(pageNumber);
     offset     = parseInt(offset);
+
+
+    // Fetching the total number of blogs and the paginated blogs from the database
 
     const total = await Blog.countDocuments();
     const blogs = await Blog.find()
@@ -42,6 +71,10 @@ export async function listBlogs(req, res, next) {
       .skip((pageNumber - 1) * offset)
       .limit(offset)
       .lean();
+
+      // Mapping the paginated blogs to include the year of creation
+      // and sending the response with the total, page number, offset, and paginated blogs
+      // as well as the total number of blogs
 
     const data = blogs.map(b => ({
       id:          b._id.toString(),
@@ -66,15 +99,22 @@ export async function listBlogs(req, res, next) {
   }
 }
 
-/**
- * GET /blog/:id
- */
+
+// 3. Getting a single blog by ID
+
+// GET - {baseurl}/blogs/:id
+
 export async function getBlog(req, res, next) {
   try {
+
+    // Fetching the blog by its ID from the database
+
     const blog = await Blog.findById(req.params.id).lean();
     if (!blog) {
       return res.status(404).json({ status: 404, message: 'Blog not found' });
     }
+
+    // Returning the blog with its ID and other relevant details if found
     return res.json({
       status: 200,
       data: {

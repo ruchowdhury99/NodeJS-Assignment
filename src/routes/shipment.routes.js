@@ -1,3 +1,6 @@
+
+//------------------------------------SHIPMENT API ROUTES------------------------------------//
+
 import { Router } from "express";
 import {
   createShipment,
@@ -11,21 +14,24 @@ import { verify } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-// 1) Create a shipment
-//    POST /shipment
+// To create a shipment
 router.post("/shipment", verify, createShipment);
 
-// 2) CRUD for single shipments
-router.get   ("/shipment/:id", verify, getShipment);
-router.put   ("/shipment/:id", verify, updateShipment);
-router.delete("/shipment/:id", verify, deleteShipment);
-
-// 3) Stats endpoint
-//    GET /shipment
+// To get shipment statistics
 router.get("/shipment", verify, getShipmentStats);
 
-// 4) Paginated details
-//    GET /shipmentDetails
+// To get shipment details
 router.get("/shipmentDetails", verify, getShipmentDetails);
+
+// To get a specific shipment
+router.get   ("/shipment/:id", verify, getShipment);
+
+// To update a specific shipment
+router.put   ("/shipment/:id", verify, updateShipment);
+
+// To delete a specific shipment
+router.delete("/shipment/:id", verify, deleteShipment);
+
+
 
 export default router;

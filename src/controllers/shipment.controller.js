@@ -1,26 +1,20 @@
+
+//-------------------------------SHIPMENT CONTROLLER-------------------------------//
+
+// 1. Create a new shipment record.
+// 2. Get the shipment record by shipmentId.
+// 3. Update the shipment record.
+// 4. Delete the shipment record by shipmentId.
+// 5. Get all shipment records.
+// 6. Get shipment details with optional filters.
+
 import Shipment from "../models/shipment.model.js";
 
-/**
- * POST /shipment
- * Create a new shipment record.
- * Body:
- * {
- *   shipmentId,
- *   product,         // ObjectId of Product
- *   productName,
- *   supplierId,      // ObjectId of Supplier
- *   supplierName,
- *   quantity,
- *   price,
- *   deliveryDate,    // ISO date string or Date
- *   shipperId,       // ObjectId of Shipper
- *   shipperName,
- *   shipmentDestination,
- *   shipmentStatus,  // Completed | In-Transit | Pending | Failed
- *   lat,
- *   long
- * }
- */
+// 1. Create a new shipment record
+
+// POST - {baseurl}/shipment
+
+ 
 export async function createShipment(req, res, next) {
     try {
       const {
@@ -40,13 +34,17 @@ export async function createShipment(req, res, next) {
         long
       } = req.body;
   
-      // Validate required fields
+      // Check the validation of required fields
+
       for (let field of ["shipmentId","productId","productName","quantity","price","deliveryDate","shipmentDestination","shipmentStatus"]) {
         if (!req.body[field]) {
           return res.status(400).json({ status: 400, message: `${field} is required` });
         }
       }
   
+
+      // Create a new shipment record and save it to the database
+
       const shipment = await Shipment.create({
         shipmentId,
         productId,
@@ -69,55 +67,75 @@ export async function createShipment(req, res, next) {
     }
   }
 
-/**
- * GET /shipment/:id
- * Fetch a single shipment by its Mongo ID.
- */
+  // 2. Get the shipment record by shipmentId
+
+  // GET - {baseurl}/shipment/:id
+
 export async function getShipment(req, res, next) {
   try {
+
+    // Fetch the shipmentId from the request parameter
+
     const shipment = await Shipment.findById(req.params.id);
     if (!shipment) {
       return res.status(404).json({ status:404, message:"Shipment not found" });
     }
+
+    // Return the fetched shipment record
+
     return res.json({ status:200, data: shipment });
   } catch (err) {
     next(err);
   }
 }
 
-/**
- * PUT /shipment/:id
- * Update an existing shipment.
- * Body: any updatable fields (same as create).
- */
+// 3. Update the shipment record
+
+// PUT - {baseurl}/shipment/:id
+
+
 export async function updateShipment(req, res, next) {
   try {
+
+    // Fetch the shipmentId from the request parameter
+
     const updated = await Shipment.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
+
+    // Check if the shipment was updated
+
     if (!updated) {
       return res.status(404).json({ status:404, message:"Shipment not found" });
     }
+
+    // Return the updated shipment record
+
     return res.json({ status:200, data: updated });
   } catch (err) {
     next(err);
   }
 }
 
-/**
- * DELETE /shipment/:id
- * Remove a shipment.
- */
+// 4. Delete the shipment record by shipmentId  
+
+// DELETE - {baseurl}/shipment/:id
+
 export async function deleteShipment(req, res, next) {
   try {
+
+    // Fetch the shipmentId to be deleted from the request parameter
+
     const deleted = await Shipment.findByIdAndDelete(req.params.id);
     if (!deleted) {
       return res.status(404).json({ status:404, message:"Shipment not found" });
     }
-    //return res.status(204).end();
 
+
+    //return res.status(204).end();
+    
     return res.status(204).json({
         status: 204,
         message: "Shipment deleted successfully"
@@ -127,12 +145,17 @@ export async function deleteShipment(req, res, next) {
   }
 }
 
-/**
- * GET /shipment
- * Overall shipment stats: Total + per-status counts.
- */
+// 5. Get overall shipment statistics
+
+// GET - {baseurl}/shipment
+
+
 export async function getShipmentStats(req, res, next) {
   try {
+
+    // Aggregate shipment records by status and count them
+    // and return the result as JSON
+
     const agg = await Shipment.aggregate([
       { $group: { _id: "$shipmentStatus", count: { $sum: 1 } } }
     ]);
@@ -147,22 +170,25 @@ export async function getShipmentStats(req, res, next) {
       stats[_id] = count;
       stats.Total += count;
     });
+
     return res.json({ status:200, data: stats });
   } catch (err) {
     next(err);
   }
 }
 
-/**
- * GET /shipmentDetails
- * Paginated shipment list with optional status filter.
- * Query:
- *   pageNumber (default 1),
- *   offset     (default 10),
- *   status     (exact or case-insensitive match)
- */
+
+// 6. Get shipment details with optional filters and pagination
+
+// GET - {baseurl}/shipmentDetails
+
 export async function getShipmentDetails(req, res, next) {
   try {
+
+    // Parse query parameters and applying filters
+    // Pagination parameters are applied to limit the number of shipments returned per page
+    // and offset the number of shipments to skip based on the page number and offset.
+    
     let { pageNumber = 1, offset = 10, status } = req.query;
     pageNumber = parseInt(pageNumber);
     offset     = parseInt(offset);
