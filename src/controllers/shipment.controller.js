@@ -136,8 +136,8 @@ export async function deleteShipment(req, res, next) {
 
     //return res.status(204).end();
     
-    return res.status(204).json({
-        status: 204,
+    return res.status(200).json({
+        status: 200,
         message: "Shipment deleted successfully"
     });
   } catch (err) {
@@ -188,7 +188,7 @@ export async function getShipmentDetails(req, res, next) {
     // Parse query parameters and applying filters
     // Pagination parameters are applied to limit the number of shipments returned per page
     // and offset the number of shipments to skip based on the page number and offset.
-    
+
     let { pageNumber = 1, offset = 10, status } = req.query;
     pageNumber = parseInt(pageNumber);
     offset     = parseInt(offset);

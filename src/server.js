@@ -3,13 +3,14 @@
 
 // Entry point of the backend application
 
+
 import express from 'express';
 import mongoose from 'mongoose';
 
 import { MONGO_URI, PORT } from './config.js';
-import authRoutes      from './routes/auth.routes.js';
-// import errorHandler    from './utils/errorHandler.js';
-import orderRoutes      from './routes/order.routes.js';
+// import errorHandler from './utils/errorHandler.js';
+import authRoutes from './routes/auth.routes.js';
+import orderRoutes from './routes/order.routes.js';
 import shipmentRoutes from './routes/shipment.routes.js';
 import productRoutes from './routes/product.routes.js';
 import stockRoutes from './routes/stock.routes.js';
@@ -30,7 +31,6 @@ app.use("/", stockRoutes);
 app.use("/", taskRoutes);
 
 app.use("/", blogRoutes);
-
 
 
 

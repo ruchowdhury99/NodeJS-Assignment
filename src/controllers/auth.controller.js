@@ -16,6 +16,7 @@ const JWT_EXPIRES_IN = '12h';
 
 // 1. Registering a new user and hashing the password
 
+
 export async function register(req, res, next) {
 
   // Checking if all required fields are provided
@@ -27,17 +28,23 @@ export async function register(req, res, next) {
       return res.status(400).json({ status: 400, message: 'Missing required fields' });
     }
 
-    // Checking if user is already registered with the provided username or email
+    // Checking if user is already registered with the provided username or email or phone number
     // If so, return an error message
 
-    const existing = await User.findOne({ $or: [{ username }, { email }] });
+    const existing = await User.findOne({
+      $or: [{ username }, { email }, { phone }]
+    });
+
     if (existing) {
-      return res.status(409).json({
-        status: 409,
-        message: existing.username === username
-          ? 'Username already taken'
-          : 'Email already registered'
-      });
+      let message;
+      if (existing.username === username) {
+        message = 'Username already taken';
+      } else if (existing.email === email) {
+        message = 'Email already registered';
+      } else {
+        message = 'Phone number already registered';
+      }
+      return res.status(409).json({ status: 409, message });
     }
 
     // Hashing the password before saving the user in the database
@@ -172,7 +179,7 @@ export async function signOut(req, res, next) {
   // if token is valid, blacklisted the token and return a success message
 
   blacklistToken(token); 
-  
+
   return res.status(200).json({
     status: 200,
     message: "Logged out successfully"
