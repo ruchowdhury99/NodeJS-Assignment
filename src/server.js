@@ -8,7 +8,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { MONGO_URI, PORT } from './config.js';
-// import errorHandler from './utils/errorHandler.js';
+import errorHandler from './utils/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import shipmentRoutes from './routes/shipment.routes.js';
@@ -35,7 +35,7 @@ app.use("/", blogRoutes);
 
 
 // Error handler
-// app.use(errorHandler);
+ app.use(errorHandler);
 
 // Connecting the database & running the server
 
