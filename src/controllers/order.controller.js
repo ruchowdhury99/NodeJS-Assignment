@@ -130,8 +130,8 @@ export async function deleteOrder(req, res, next) {
     await Order.findByIdAndDelete(req.params.id);
     
     
-    return res.status(204).json({
-        status: 204,
+    return res.status(200).json({
+        status: 200,
         message: "Order deleted successfully"
     });
   } catch (err) {
